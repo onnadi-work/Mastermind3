@@ -5,12 +5,12 @@ import java.util.ArrayList;
 import static org.junit.Assert.*;
 
 public class MastermindTest {
-    public boolean misplaced(ArrayList<Integer> secret, ArrayList<Integer> guess, int index){
+    public boolean isMisplaced(ArrayList<Integer> secret, ArrayList<Integer> guess, int index){
         return secret.contains(guess.get(index)) &&
                 secret.get(index) != guess.get(index);
     }
 
-    public boolean wellPlaced(ArrayList<Integer> secret, ArrayList<Integer> guess, int index){
+    public boolean isWellPlaced(ArrayList<Integer> secret, ArrayList<Integer> guess, int index){
         return secret.get(index) == guess.get(index);
     }
 
@@ -30,27 +30,40 @@ public class MastermindTest {
     }
 
     public ArrayList<Integer> list(int... i) {
-        ArrayList<Integer> ret = new ArrayList<>();
+        ArrayList<Integer> returnValue = new ArrayList<>();
 
         for(int item: i){
-            ret.add(item);
+            returnValue.add(item);
         }
 
-        return ret;
+        return returnValue;
     }
 
     public ArrayList<Integer> evaluate(ArrayList<Integer> secret, ArrayList<Integer> guess) {
-        ArrayList<Integer> ret = new ArrayList<>();
-        ret.add(count(secret, guess, this::wellPlaced));
-        ret.add(count(secret, guess, this::misplaced));
-        return ret;
+        ArrayList<Integer> returnValue = new ArrayList<>();
+        returnValue.add(count(secret, guess, this::isWellPlaced));
+        returnValue.add(count(secret, guess, this::isMisplaced));
+        return returnValue;
     }
 
 
     @Test
-    public void testEvaluate() {
-        assertEquals(list(0, 0), evaluate(list(1), list(2)));
-        assertEquals(list(1, 0), evaluate(list(2), list(2)));
+    public void givenOneMisplacedAndOneWrongReturn0_1() {
         assertEquals(list(0, 1), evaluate(list(1, 3), list(2, 1)));
+    }
+
+    @Test
+    public void givenOneWellPlacedAndOneWrongReturn1_0(){
+        assertEquals(list(1, 0), evaluate(list(1, 2), list(1, 3)));
+    }
+
+    @Test
+    public void givenTotallyWrongGuessReturn0_0(){
+        assertEquals(list(0, 0), evaluate(list(1), list(2)));
+    }
+
+    @Test
+    public void givenCorrectGuessReturnSizeOfBoard_0(){
+        assertEquals(list(2, 0), evaluate(list(2, 3), list(2, 3)));
     }
 }
